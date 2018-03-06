@@ -22,9 +22,9 @@ def read_points():
 def write_results(listResult, dataset, k):
     with open('kmeans2-result.txt', 'a') as file:
         for kind in range(k):
-            file.write("CLASSINFO:%d\n" % (kind + 1))
+            file.write("CLASSINFO:%d--%d\n" % (kind + 1,len(listResult[kind])))
             for j in listResult[kind]:
-                file.write('%d\n' % j)
+                file.write('%d ' % j)
             file.write('\n')
         file.write('\n\n')
         file.close()
@@ -115,7 +115,7 @@ def generate_k(data_set, k):
 def k_means(dataset, k):
     # 产生了聚类初始中心（k个）
     k_points = generate_k(dataset, k)
-    #
+    #按照最短距离（欧式距离）原则将所有样本分配到k个聚类中心中的某一个
     assignments = assign_points(dataset, k_points)
     old_assignments = None
     #计算各个聚类中心的新向量，更新距离，即每一类中每一维均值向量。
@@ -124,6 +124,7 @@ def k_means(dataset, k):
         new_centers = update_centers(dataset, assignments, k)
         old_assignments = assignments
         assignments = assign_points(dataset, new_centers)
+    #通过Python中的zip函数整合成字典
     result = list(zip(assignments, dataset))
     print('\n\n---------------------------------分类结果---------------------------------------\n\n')
     for out in result:
